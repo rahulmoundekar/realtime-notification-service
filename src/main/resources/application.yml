@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: realtime-notification-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/realtime_notification
+    username: postgres
+    password: root
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
+      timeout: 2s
+
+server:
+  port: 8080
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+app:
+  redis:
+    notification-channel: notification-events
