@@ -1,6 +1,8 @@
 package com.rahul.realtime.notification.sse;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -15,9 +17,12 @@ public class SseConnectionManager {
 
     private final ConcurrentHashMap<String, Set<SseEmitter>> userEmitters = new ConcurrentHashMap<>();
 
+    @Value("${app.sse.timeout}")
+    private long sseTimeout;
+
     public SseEmitter addEmitter(String userId) {
 
-        SseEmitter emitter = new SseEmitter(30 * 60 * 1000L);
+        SseEmitter emitter = new SseEmitter(sseTimeout);
 
         userEmitters.computeIfAbsent(userId, key -> ConcurrentHashMap.newKeySet()).add(emitter);
 
@@ -75,5 +80,26 @@ public class SseConnectionManager {
                 log.warn("Failed to send SSE notification. userId={}", userId, exception);
             }
         }
+    }
+
+    @Scheduled(fixedRate = 25_000)
+    public void sendHeartbeat() {
+
+        userEmitters.forEach((userId, emitters) -> {
+
+            for (SseEmitter emitter : emitters) {
+
+                try {
+
+                    emitter.send(SseEmitter.event().comment("heartbeat"));
+
+                } catch (Exception exception) {
+
+                    removeEmitter(userId, emitter);
+
+                    log.debug("Removed stale SSE connection. userId={}", userId);
+                }
+            }
+        });
     }
 }

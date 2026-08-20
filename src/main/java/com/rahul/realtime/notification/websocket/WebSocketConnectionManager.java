@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.handler.ConcurrentWebSocketSessionDecorator;
 
 import java.util.Collections;
 import java.util.Set;
@@ -21,11 +22,13 @@ public class WebSocketConnectionManager {
 
     public void addSession(String userId, WebSocketSession session) {
 
-        userSessions.computeIfAbsent(userId, key -> ConcurrentHashMap.newKeySet()).add(session);
+        WebSocketSession safeSession = new ConcurrentWebSocketSessionDecorator(session, 10_000, 512 * 1024);
+
+        userSessions.computeIfAbsent(userId, key -> ConcurrentHashMap.newKeySet()).add(safeSession);
 
         connectionRegistry.register(userId);
 
-        log.info("WebSocket connected. userId={}, sessionId={}", userId, session.getId());
+        log.info("WebSocket connected. userId={}, sessionId={}", userId, safeSession.getId());
     }
 
     public void removeSession(String userId, WebSocketSession session) {
@@ -39,9 +42,7 @@ public class WebSocketConnectionManager {
         sessions.remove(session);
 
         if (sessions.isEmpty()) {
-
             userSessions.remove(userId);
-
             connectionRegistry.unregister(userId);
         }
 
@@ -51,5 +52,31 @@ public class WebSocketConnectionManager {
     public Set<WebSocketSession> getSessions(String userId) {
 
         return userSessions.getOrDefault(userId, Collections.emptySet());
+    }
+
+    public void cleanupClosedSessions() {
+
+        userSessions.forEach((userId, sessions) -> {
+
+            sessions.removeIf(session -> !session.isOpen());
+
+            if (sessions.isEmpty()) {
+
+                userSessions.remove(userId);
+
+                connectionRegistry.unregister(userId);
+            }
+        });
+    }
+
+    public Set<WebSocketSession> getAllSessions() {
+
+        Set<WebSocketSession> allSessions =
+                ConcurrentHashMap.newKeySet();
+
+        userSessions.values()
+                .forEach(allSessions::addAll);
+
+        return allSessions;
     }
 }

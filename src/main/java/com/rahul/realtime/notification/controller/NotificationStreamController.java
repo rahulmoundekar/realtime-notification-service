@@ -20,11 +20,11 @@ public class NotificationStreamController {
 
         try {
 
-            emitter.send(SseEmitter.event().name("connected").data("SSE connection established"));
+            emitter.send(SseEmitter.event().name("connected").reconnectTime(3000).data("SSE connection established"));
 
         } catch (Exception exception) {
 
-            sseConnectionManager.removeEmitter(userId, emitter);
+            emitter.completeWithError(exception);
         }
 
         return emitter;

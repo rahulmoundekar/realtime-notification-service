@@ -23,7 +23,7 @@ spring:
       timeout: 2s
 
 server:
-  port: 8080
+  port: 8081
   shutdown: graceful
 
 management:
@@ -43,3 +43,7 @@ app:
     allowed-origins: http://localhost:3000,http://localhost:5173
   instance:
     id: ${INSTANCE_ID:${spring.application.name}-${server.port}}
+
+  sse:
+    timeout: 1800000
+    heartbeat-interval: 25000
