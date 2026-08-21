@@ -7,7 +7,8 @@ import com.rahul.realtime.notification.dto.response.NotificationResponse;
 public interface NotificationService {
 
     NotificationResponse createNotification(
-            CreateNotificationRequest request
+            CreateNotificationRequest request,
+            String userId
     );
 
     NotificationPageResponse getUserNotifications(
@@ -16,7 +17,7 @@ public interface NotificationService {
             int size
     );
 
-    NotificationResponse markAsRead(Long notificationId);
+    NotificationResponse markAsRead(Long notificationId, String userId);
 
     NotificationPageResponse getUnreadNotifications(
             String userId,

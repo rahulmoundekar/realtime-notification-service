@@ -1,5 +1,6 @@
 package com.rahul.realtime.notification.service.impl;
 
+import com.rahul.realtime.notification.exception.NotificationPublishException;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 import com.rahul.realtime.notification.dto.event.NotificationEvent;
@@ -13,8 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class RedisNotificationPublisher
-        implements NotificationPublisher {
+public class RedisNotificationPublisher implements NotificationPublisher {
 
     private final RedisTemplate<String, String> redisTemplate;
     private final ObjectMapper objectMapper;
@@ -26,40 +26,39 @@ public class RedisNotificationPublisher
     public void publish(NotificationEvent event) {
 
         try {
-            String payload =
-                    objectMapper.writeValueAsString(event);
 
-            log.info(
-                    "Publishing notification. channel={}, notificationId={}, userId={}, payload={}",
-                    notificationChannel,
-                    event.notificationId(),
-                    event.userId(),
-                    payload
-            );
+            String payload = objectMapper.writeValueAsString(event);
 
-            Long subscriberCount = redisTemplate.convertAndSend(
-                    notificationChannel,
-                    payload
-            );
+            Long subscriberCount = redisTemplate.convertAndSend(notificationChannel, payload);
 
-            log.info(
-                    "Redis publish complete. channel={}, subscriberCount={}",
-                    notificationChannel,
-                    subscriberCount
-            );
+            log.info("Redis notification published. channel={}, notificationId={}, subscriberCount={}", notificationChannel, event.notificationId(), subscriberCount);
 
         } catch (JacksonException exception) {
 
-            log.error(
-                    "Failed to serialize notification event. notificationId={}",
-                    event.notificationId(),
-                    exception
-            );
+            log.error("Notification event serialization failed. notificationId={}", event.notificationId(), exception);
 
-            throw new IllegalStateException(
-                    "Failed to publish notification event",
-                    exception
-            );
+            throw new NotificationPublishException("Unable to serialize notification event", exception);
+
+        } catch (Exception exception) {
+
+            log.error("Redis notification publishing failed. notificationId={}, channel={}", event.notificationId(), notificationChannel, exception);
+
+            throw new NotificationPublishException("Unable to publish notification event", exception);
+        }
+    }
+
+    @Override
+    public void publishPayload(String payload) {
+
+        try {
+
+            Long subscriberCount = redisTemplate.convertAndSend(notificationChannel, payload);
+
+            log.info("Redis outbox event published. channel={}, subscriberCount={}", notificationChannel, subscriberCount);
+
+        } catch (Exception exception) {
+
+            throw new NotificationPublishException("Unable to publish outbox event", exception);
         }
     }
 }

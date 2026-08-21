@@ -8,6 +8,8 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.security.Principal;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -18,7 +20,7 @@ public class NotificationWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
 
-        String userId = extractUserId(session);
+        String userId = getAuthenticatedUserId(session);
 
         connectionManager.addSession(userId, session);
     }
@@ -38,21 +40,20 @@ public class NotificationWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) {
 
-        String userId = extractUserId(session);
+        String userId = getAuthenticatedUserId(session);
 
         connectionManager.removeSession(userId, session);
     }
 
-    private String extractUserId(WebSocketSession session) {
+    private String getAuthenticatedUserId(WebSocketSession session) {
 
-        if (session.getUri() == null) {
-            throw new IllegalStateException("WebSocket session URI is not available");
+        Principal principal = session.getPrincipal();
+
+        if (principal == null) {
+
+            throw new IllegalStateException("Authenticated principal not found");
         }
 
-        String path = session.getUri().getPath();
-
-        String[] parts = path.split("/");
-
-        return parts[parts.length - 1];
+        return principal.getName();
     }
 }

@@ -7,9 +7,6 @@ import jakarta.validation.constraints.Size;
 
 public record CreateNotificationRequest(
 
-        @NotBlank(message = "userId is required")
-        String userId,
-
         @NotNull(message = "notification type is required")
         NotificationType type,
 

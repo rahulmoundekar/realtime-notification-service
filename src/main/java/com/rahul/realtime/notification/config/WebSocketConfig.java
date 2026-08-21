@@ -11,27 +11,16 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @Configuration
 @EnableWebSocket
 @RequiredArgsConstructor
-public class WebSocketConfig
-        implements WebSocketConfigurer {
+public class WebSocketConfig implements WebSocketConfigurer {
 
-    private final NotificationWebSocketHandler
-            notificationWebSocketHandler;
+    private final NotificationWebSocketHandler notificationWebSocketHandler;
 
     @Value("${app.websocket.allowed-origins}")
     private String allowedOrigins;
 
     @Override
-    public void registerWebSocketHandlers(
-            WebSocketHandlerRegistry registry
-    ) {
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
 
-        registry
-                .addHandler(
-                        notificationWebSocketHandler,
-                        "/ws/notifications/{userId}"
-                )
-                .setAllowedOrigins(
-                        allowedOrigins.split(",")
-                );
+        registry.addHandler(notificationWebSocketHandler, "/ws/notifications").setAllowedOrigins(allowedOrigins.split(","));
     }
 }

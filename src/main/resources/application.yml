@@ -22,8 +22,14 @@ spring:
       password:
       timeout: 2s
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          public-key-location: classpath:security/public_key.pem
+
 server:
-  port: 8081
+  port: 8080
   shutdown: graceful
 
 management:
