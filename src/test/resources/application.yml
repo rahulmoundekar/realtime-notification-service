@@ -1,0 +1,31 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/realtime_notification
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2s
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+app:
+  redis:
+    notification-channel: notification-events
+
+  websocket:
+    allowed-origins: http://localhost:3000,http://localhost:5173
+
+  instance:
+    id: integration-test
+
+  sse:
+    timeout: 1800000
+    heartbeat-interval: 25000

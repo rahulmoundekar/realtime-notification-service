@@ -8,7 +8,6 @@ com\rahul\realtime\notification\dto\event\NotificationEvent.class
 com\rahul\realtime\notification\dto\request\PackageMarker.class
 com\rahul\realtime\notification\security\AuthenticatedUserService.class
 com\rahul\realtime\notification\service\NotificationService.class
-com\rahul\realtime\notification\config\dev\DevJwtConfig.class
 com\rahul\realtime\notification\dto\request\CreateNotificationRequest.class
 com\rahul\realtime\notification\websocket\WebSocketConnectionManager.class
 com\rahul\realtime\notification\exception\GlobalExceptionHandler.class
@@ -27,7 +26,6 @@ com\rahul\realtime\notification\service\NotificationPublisher.class
 com\rahul\realtime\notification\websocket\WebSocketHeartbeatService.class
 com\rahul\realtime\notification\redis\RedisConnectionRegistry.class
 com\rahul\realtime\notification\dto\response\ErrorResponse.class
-com\rahul\realtime\notification\config\dev\DevTokenController.class
 com\rahul\realtime\notification\websocket\WebSocketCleanupScheduler.class
 com\rahul\realtime\notification\dto\response\NotificationPageResponse.class
 com\rahul\realtime\notification\websocket\NotificationWebSocketHandler.class

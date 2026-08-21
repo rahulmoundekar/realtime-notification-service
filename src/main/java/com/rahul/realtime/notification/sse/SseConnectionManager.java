@@ -102,4 +102,16 @@ public class SseConnectionManager {
             }
         });
     }
+
+    public int getEmitterCount(String userId) {
+
+        Set<SseEmitter> emitters =
+                userEmitters.get(userId);
+
+        if (emitters == null) {
+            return 0;
+        }
+
+        return emitters.size();
+    }
 }
