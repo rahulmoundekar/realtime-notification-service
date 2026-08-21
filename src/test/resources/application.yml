@@ -29,3 +29,6 @@ app:
   sse:
     timeout: 1800000
     heartbeat-interval: 25000
+
+  delivery:
+    dedup-max-entries: 1000

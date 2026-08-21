@@ -1,6 +1,7 @@
 package com.rahul.realtime.notification.service.impl;
 
 import com.rahul.realtime.notification.dto.event.NotificationEvent;
+import com.rahul.realtime.notification.service.NotificationDeliveryDeduplicator;
 import com.rahul.realtime.notification.service.NotificationDeliveryService;
 import com.rahul.realtime.notification.sse.SseConnectionManager;
 import com.rahul.realtime.notification.websocket.WebSocketConnectionManager;
@@ -25,8 +26,25 @@ public class NotificationDeliveryServiceImpl implements NotificationDeliveryServ
 
     private final ObjectMapper objectMapper;
 
+    private final NotificationDeliveryDeduplicator
+            deduplicator;
+
     @Override
     public void deliver(NotificationEvent event) {
+
+        if (!deduplicator.shouldDeliver(
+                event.notificationId()
+        )) {
+
+            log.info(
+                    "Duplicate notification skipped. " +
+                            "notificationId={}, userId={}",
+                    event.notificationId(),
+                    event.userId()
+            );
+
+            return;
+        }
 
         deliverViaWebSocket(event);
 
@@ -59,6 +77,7 @@ public class NotificationDeliveryServiceImpl implements NotificationDeliveryServ
             log.error("Failed to send WebSocket notification. notificationId={}, userId={}", event.notificationId(), event.userId(), exception);
         }
     }
+
 
     private void deliverViaSse(NotificationEvent event) {
 

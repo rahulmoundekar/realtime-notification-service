@@ -5,9 +5,11 @@ com\rahul\realtime\notification\entity\NotificationOutboxEvent.class
 com\rahul\realtime\notification\enums\NotificationType.class
 com\rahul\realtime\notification\repository\NotificationRepository.class
 com\rahul\realtime\notification\dto\event\NotificationEvent.class
+com\rahul\realtime\notification\service\NotificationDeliveryDeduplicator.class
 com\rahul\realtime\notification\dto\request\PackageMarker.class
 com\rahul\realtime\notification\security\AuthenticatedUserService.class
 com\rahul\realtime\notification\service\NotificationService.class
+com\rahul\realtime\notification\config\NotificationMetrics.class
 com\rahul\realtime\notification\dto\request\CreateNotificationRequest.class
 com\rahul\realtime\notification\websocket\WebSocketConnectionManager.class
 com\rahul\realtime\notification\exception\GlobalExceptionHandler.class
@@ -36,3 +38,4 @@ com\rahul\realtime\notification\dto\response\NotificationResponse.class
 com\rahul\realtime\notification\config\WebSocketConfig.class
 com\rahul\realtime\notification\controller\NotificationStreamController.class
 com\rahul\realtime\notification\exception\NotificationAccessDeniedException.class
+com\rahul\realtime\notification\service\impl\NotificationDeliveryDeduplicatorImpl.class

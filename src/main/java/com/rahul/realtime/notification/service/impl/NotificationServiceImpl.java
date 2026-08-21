@@ -1,5 +1,6 @@
 package com.rahul.realtime.notification.service.impl;
 
+import com.rahul.realtime.notification.config.NotificationMetrics;
 import com.rahul.realtime.notification.dto.event.NotificationEvent;
 import com.rahul.realtime.notification.dto.request.CreateNotificationRequest;
 import com.rahul.realtime.notification.dto.response.NotificationPageResponse;
@@ -35,6 +36,7 @@ public class NotificationServiceImpl implements NotificationService {
     private final NotificationPublisher notificationPublisher;
     private final NotificationOutboxRepository notificationOutboxRepository;
     private final ObjectMapper objectMapper;
+    private final NotificationMetrics notificationMetrics;
 
     @Override
     @Transactional
@@ -70,6 +72,7 @@ public class NotificationServiceImpl implements NotificationService {
 
             throw new IllegalStateException("Failed to create notification event", exception);
         }
+        notificationMetrics.notificationCreated();
 
         return response;
     }

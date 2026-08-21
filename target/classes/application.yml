@@ -41,6 +41,7 @@ management:
     health:
       probes:
         enabled: true
+      show-details: when-authorized
 
 app:
   redis:
@@ -53,3 +54,6 @@ app:
   sse:
     timeout: 1800000
     heartbeat-interval: 25000
+
+  delivery:
+    dedup-max-entries: 10000

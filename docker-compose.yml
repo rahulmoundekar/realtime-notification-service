@@ -1,0 +1,87 @@
+services:
+
+  postgres:
+    image: postgres:18
+    container_name: realtime-postgres
+
+    environment:
+      POSTGRES_DB: realtime_notification
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U postgres -d realtime_notification"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7
+    container_name: realtime-redis
+
+    ports:
+      - "6379:6379"
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "redis-cli",
+          "ping"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  notification-service:
+    image: realtime-notification-service:1.0
+
+    container_name: realtime-notification-service
+
+    ports:
+      - "8080:8080"
+
+    environment:
+
+      SPRING_DATASOURCE_URL:
+        jdbc:postgresql://postgres:5432/realtime_notification
+
+      SPRING_DATASOURCE_USERNAME:
+        postgres
+
+      SPRING_DATASOURCE_PASSWORD:
+        root
+
+      SPRING_DATA_REDIS_HOST:
+        redis
+
+      SPRING_DATA_REDIS_PORT:
+        6379
+
+      APP_REDIS_NOTIFICATION_CHANNEL:
+        notification-events
+
+      APP_INSTANCE_ID:
+        notification-service-8080
+
+    depends_on:
+
+      postgres:
+        condition: service_healthy
+
+      redis:
+        condition: service_healthy
+
+volumes:
+
+  postgres_data:
