@@ -1439,6 +1439,6 @@ Outbox     = reliable DB-to-event boundary
 
 # 36. Project status
 
-**API 07 — Real-Time Notification Service is implemented and locally runnable with PostgreSQL + Redis + Docker Compose.**
+Real-Time Notification Service is implemented and locally runnable with PostgreSQL + Redis + Docker Compose.
 
 The project demonstrates a realistic distributed notification architecture with REST, WebSocket, SSE, Redis Pub/Sub, JWT security, PostgreSQL persistence, outbox-based recovery, multi-instance delivery, automated integration tests, and Docker-based local deployment.
