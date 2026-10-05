@@ -101,6 +101,20 @@ Redis Pub/Sub provides the cross-instance fan-out mechanism.
 
 # 4. High-level architecture
 
+## 🧭 Engineering Case Study
+
+| Concern | Design decision | Why it matters |
+|---|---|---|
+| Durability | Persist notifications in PostgreSQL | Users can recover history after disconnects |
+| Cross-instance delivery | Redis Pub/Sub | A notification created on one instance can reach clients connected elsewhere |
+| Client transport | WebSocket + SSE fallback | Supports interactive real-time delivery with an alternate stream |
+| Security | JWT-derived identity + ownership checks | Clients cannot choose another user's notification context |
+
+<p align="center">
+  <img src="assets/architecture.svg" width="100%" alt="Real-time notification architecture"/>
+</p>
+
+
 ```text
                            Client
                              |
