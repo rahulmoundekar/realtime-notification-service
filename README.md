@@ -1,5 +1,7 @@
 # Real-Time Notification Service
 
+<p align="center">[![CI](https://github.com/rahulmoundekar/realtime-notification-service/actions/workflows/ci.yml/badge.svg)](https://github.com/rahulmoundekar/realtime-notification-service/actions/workflows/ci.yml)</p>
+
 A production-oriented real-time notification microservice built with **Spring Boot**, **PostgreSQL**, **Redis Pub/Sub**, **WebSocket**, **Server-Sent Events (SSE)**, **JWT/Spring Security**, and an **Outbox pattern**.
 
 The application provides durable notification storage through PostgreSQL and real-time delivery through WebSocket, with SSE available as a fallback. Redis Pub/Sub provides event fan-out so that notifications can be delivered correctly when multiple application instances are running.
